@@ -1,3 +1,3 @@
 # Attorney Data Reporting
 
-Please see our [wiki](https://github.com/quandis/adr/wiki) page for details on using and integrating with ADR.
+Please see our [integration guide](http://www.quandis.com/freddiemacadr-integrationguide_html) for details on using the samples here.
