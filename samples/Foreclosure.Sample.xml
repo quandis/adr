@@ -1,0 +1,85 @@
+﻿<ImportCollection>
+  <ForeclosureItem>
+    <SubscriberID>www.attorney.com-Foreclosure-10000053</SubscriberID>
+    <Loan>
+      <Agency>Freddie Mac</Agency>
+      <Loan>408693568</Loan>
+      <!--Begin New Data Elements-->
+      <ServicerLoanID>00001255568</ServicerLoanID>
+      <LoanType>Conventional</LoanType>
+      <OriginalBalance>155765.33</OriginalBalance>
+      <UPBAmount>135400.44</UPBAmount>
+      <LienPriorityType>1</LienPriorityType>
+      <PublicRecords>
+        <PublicRecordItem>
+          <PublicRecord>Mortgage Deed of Trust</PublicRecord>
+          <FilingDate>2015-07-21</FilingDate>
+          <RecordingDate>2015-07-25</RecordingDate>
+        </PublicRecordItem>
+      </PublicRecords>
+      <!--End New Data Elements-->
+      <Borrowers>
+        <BorrowerItem>
+          <LastName>Doe</LastName>
+          <FirstName>Jane</FirstName>
+          <BorrowerType>Primary</BorrowerType>
+          <USSSN>555124444</USSSN>
+          <Address>123 Maple</Address>
+          <City>Miami</City>
+          <State>FL</State>
+          <PostalCode>33135</PostalCode>
+          <Sequence>1</Sequence>
+        </BorrowerItem>
+        <BorrowerItem>
+          <LastName>Doe</LastName>
+          <FirstName>John</FirstName>
+          <BorrowerType>Primary</BorrowerType>
+          <USSSN>555124445</USSSN>
+          <Address>123 Maple</Address>
+          <City>Miami</City>
+          <State>FL</State>
+          <PostalCode>33135</PostalCode>
+          <Sequence>2</Sequence>
+        </BorrowerItem>
+     </Borrowers>
+    </Loan>
+    <Foreclosure>10000053</Foreclosure>
+    <DateOpened>2018-03-22</DateOpened>
+    <TotalDebtLedger>
+      <Template>Total Debt</Template>
+      <Items>
+        <AccruedLateCharges>15.00</AccruedLateCharges>
+        <PendingAdvances>25</PendingAdvances>
+        <FCFeesCosts>
+          <Items>
+            <ForeclosureFee>15</ForeclosureFee>
+          </Items>
+        </FCFeesCosts>
+      </Items>
+    </TotalDebtLedger>
+    <Forms>
+      <ImportFormItem>
+        <Template>Foreclosure File Received</Template>
+        <ProjectedCompletion>2018-04-25</ProjectedCompletion>
+        <ActualCompletion>2018-05-02</ActualCompletion>
+        <Messages_0_Message>Task Changed</Messages_0_Message>
+        <Messages_0_BodyText>Task changed because of this reason</Messages_0_BodyText>
+      </ImportFormItem>
+    </Forms>
+    <Messages>
+      <MessageItem>
+        <Template>Attorney Message</Template>
+        <Message>This is the subject</Message>
+        <BodyText>Message Content Goes here</BodyText>
+      </MessageItem>
+    </Messages>
+    <Attachments>
+      <AttachmentItem>
+        <FileName>Deficiency.pdf</FileName>
+        <Template>Deficiency Judgment</Template>
+        <Description>Description goes here</Description>
+        <Content><![CDATA[Base64]]></Content>
+      </AttachmentItem>
+    </Attachments>
+  </ForeclosureItem>
+</ImportCollection>

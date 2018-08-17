@@ -1,0 +1,2400 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+  xmlns:sch ="http://www.ascc.net/xml/schematron">
+  <xs:annotation>
+    <xs:appinfo>
+      <sch:title>ADR Validation</sch:title>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="ImportCollection" type="ImportCollectionType"/>
+  <xs:complexType name="ImportCollectionType">
+    <xs:sequence>
+      <xs:element maxOccurs="1" minOccurs="1" name="ForeclosureItem" type="ForeclosureItemType">
+        <xs:annotation>
+          <xs:appinfo>
+            <sch:pattern id="001" Name="BindingElementsRequired">
+              <sch:rule context="ForeclosureItem">
+                <sch:report test="count(SubscriberID) = 0 and count(Foreclosure) = 0 and count(Foreclosure) = 0">
+                  SubscriberID and/or Attorney Case ID must be provided to locate record
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="ForeclosureItemType">
+    <xs:all>
+      <xs:element name="SubscriberID" type="qbo.SubscriberID" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Loan" type="qboLoanType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure" type="qboNvarchar50" minOccurs="0" maxOccurs="1"/>
+      <!--<xs:element name="DateOpened" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>-->
+      <xs:element name="ProcessType" type="qbo.ProcessType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="DateClosed" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Status" type="qbo.Foreclosure.Status" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ClosedReason" type="qbo.Foreclosure.CloseReason" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="FCCaseNumber" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="SaleAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="SoldToName" type="qbo.Foreclosure.SoldToName" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ScheduledSaleDate" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="OpeningBidAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="RedemptionDate" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="RedemptionAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="DeficiencyStatus" type="qbo.Foreclosure.DeficiencyStatus" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="TotalDebtLedger" type="qbo.Ledger.TotalDebtLedger" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Delays" type="qbo.DecisionDelayCollection" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Forms" type="qbo.ImportFormCollection" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Attachments" type="qbo.AttachmentCollection" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Messages" type="qbo.MessageCollection" minOccurs="0" maxOccurs="1"/>
+      <!-- Restart Fields-->
+      <xs:element name="ActualStart" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="BodyText" type="qboText" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+    <xs:attribute name="Operation" type="qbo.Foreclosure.Operation"/>
+  </xs:complexType>
+  <!--Complex Types-->
+  <xs:complexType name="qbo.MessageCollection">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="50" name="MessageItem" type="MessageItemType">
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="MessageItemType">
+    <xs:all>
+      <xs:element name="Message" type="qboNvarchar50" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Template" type="qbo.MessageTemplate" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="BodyText" type="qboText" minOccurs="1" maxOccurs="1"/>
+    </xs:all>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:simpleType name="qbo.MessageTemplate">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Attorney Message">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure, Bankruptcy</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="qbo.AttachmentCollection">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="10" name="AttachmentItem" type="AttachmentItemType">
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="AttachmentItemType">
+    <xs:all>
+      <xs:element name="FileName" type="qboNvarchar50" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Contains file name with extension</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="Template" type="qbo.AttachmentTemplate" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Description" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Content" type="qboText" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>Base64 encoded content</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:all>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:simpleType name="qbo.AttachmentTemplate">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Act Letters">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavit of Indebtedness">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavit of Service">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Application">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Appraisal">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="ARM Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Assignment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Assignment (unrecorded)">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Assignment of Judgment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Auditor's Report">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Ratification of the Auditor's Report">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Plan">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bid Form">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="BPO">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Breach Letter">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Attachment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Purchase">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Sale (mh)">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Title (mh)">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Charge Off Form">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Condo Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Consent Orders">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Contract for Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Copy of Assignment of Lease">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Copy of Proprietary Lease">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Copy of Stock Certificate">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Copy of Stock Power">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Copy of UCC-1">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Credit Bureau">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Credit Life Insurance">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Credit Report">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Current Title Commitment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Customer Correspondence">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Deed of Trust">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Payoffs">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Deficiency Judgment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Demand Letter">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Derogatory Credit Explanation">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="DIL Authorization">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Disclosure of Loan Terms">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Environmental Hazards">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="EPA Correspondence">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Extension Agreement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FC Bidding Instructions">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FC Document">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FC Final Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FHA Eviction Package">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FHA Post Sale Package">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FHA Title Package">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Flood Insurance Certification">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Forbearance Agreement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure complaints">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure Judgments">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure/Sheriff's Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Good Faith Estimate">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="HAMP Letter">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Hardship Letter">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Home Equity Order">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="HUD">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="HUD-1">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Loan Application">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Loan Approval">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Lost Assignment Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Lost Note Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mechanic's Lien Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Misc Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mobile-Home Title">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Modification">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mortgage">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mortgage Insuring Certificate">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mortgage Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Relief Order">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MultipleTest">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Name Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Non Sufficient Fund">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Note">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Note Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of BK Filing">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Default Complaint">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Intent Seek Def">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order Approving FC Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Other">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Payment History">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Payoff Quote">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Payoff Statements">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Power of Attorney">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Property Inspection">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Property Insurance Policy">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="PUD Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Purchase Sales Contract">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Reaffirmation">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Recorded Security Instrument">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Rehabilitation Loan Rider">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Reinstatement Quote">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Release of Lien">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Release/Dismissal of Tax Suit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Returned POCs">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Right to Cancel">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Security Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sheriff's Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sheriff's Sale Notice">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Stipulated Plan">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Substitute Trustee's Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Substitution of Trustee">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summary Sheet">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summon &amp; Complaint Docs">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Survey">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Commitment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Indemnity">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Policy">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Search">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Transfer of Service Disclosure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Truth in Lending">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Underwriter Approval Letter">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Unrecorded Mortgage">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Upload Test">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Warranty Deed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="qbo.DecisionDelayCollection">
+    <xs:sequence>
+      <xs:element  minOccurs="1" maxOccurs="1" name="DecisionDelayItem" type="qbo.DecisionDelayItem">
+        <xs:annotation>
+          <xs:appinfo>
+            <sch:pattern id="001" Name="MessageValidation">
+              <sch:rule context="DecisionDelayItem">
+                <sch:report test="(count(Messages_0_Message) = 1 and count(Messages_0_BodyText) = 0) or (count(Messages_0_Message) = 0 and count(Messages_0_BodyText) = 1)">
+                  Both Message and BodyText must be provided when including Message
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+            <sch:pattern id="002" Name="AddDateValidation">
+              <sch:rule context="DecisionDelayItem">
+                <sch:report test="count(ActualCompletion) = 0 and (count(ProjectedCompletion) = 0 or count(ActualStart) = 0)">
+                  ActualStart and ProjectedCompletion must be provided when adding a delay
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+            <sch:pattern id="003" Name="CompleteDateValidation">
+              <sch:rule context="DecisionDelayItem">
+                <sch:report test="count(ActualCompletion) = 0 and count(ProjectedCompletion) = 0 and count(ActualStart) = 0">
+                  ActualCompletion or ActualStart and ProjectedCompletion must be provided when adding or updating a delay
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="qbo.ImportFormCollection">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="25" name="ImportFormItem" type="ImportFormItemType">
+        <xs:annotation>
+          <xs:appinfo>
+            <sch:pattern id="001" Name="MessageValidation">
+              <sch:rule context="ImportFormItem">
+                <sch:report test="(count(Messages_0_Message) = 1 and count(Messages_0_BodyText) = 0) or (count(Messages_0_Message) = 0 and count(Messages_0_BodyText) = 1)">
+                  Both Message and BodyText must be provided when including Message
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+            <sch:pattern id="002" Name="DateValidation">
+              <sch:rule context="ImportFormItem">
+                <sch:report test="count(ProjectedCompletion) = 0 and count(ActualCompletion) = 0">
+                  ProjectedCompletion or ActualCompletion must be provided
+                </sch:report>
+              </sch:rule>
+            </sch:pattern>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="ImportFormItemType">
+    <xs:all>
+      <xs:element name="MFR" type="qboNvarchar50" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="POC" type="qboNvarchar50" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure" type="qboNvarchar50" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ObjectSubscriberID" type="qbo.SubscriberID" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Template" type="qbo.ImportFormTemplate.Foreclosure" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="ProjectedCompletion" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ActualCompletion" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Messages_0_Message" type="qbo.ImportFormMessageType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Messages_0_BodyText" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_Loan_UPBAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_SaleAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_SoldToName" type="qbo.Foreclosure.SoldToName" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_BidAtSale_BidMax" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_BidAtSale_BidOpening" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="OpeningBidAmount" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_BidAtSale_BidDue" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_TotalDebtLedger_AmountMoney" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_TotalDebtLedger_Ledger" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_Contact" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_Address" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_City" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_State" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_PostalCode" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_ThirdPartyContact_Phone" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_FCCaseNumber" type="qboText" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Foreclosure_DeficiencyStatus" type="qbo.Foreclosure.DeficiencyStatus" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+
+  <xs:simpleType name="qbo.ImportFormMessageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Task Changed" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.ImportFormTemplate.Foreclosure">
+    <xs:restriction base="xs:string">
+
+      <xs:enumeration value="Foreclosure Case Closure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Case Closure">
+        <xs:annotation>
+          <xs:documentation>Applies to Bankruptcy</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Closing/Deed Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Complaint Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavit of Mortgage Sent Servicer">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Auction">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Sale Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Court Decree/Judgement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Deed Issued">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Deed Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Advertising Commenced">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Application for Expedited Order to Allow FCL Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Sheriff's Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Aff of Service, RJI, Attorney Affirmation Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Complaint Served">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Judgment Enters">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Expiration of 30 Day Statutory Notice Period">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Answer Period Expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Complaint Ordered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Draft Motion to Enlarge/Publish">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Expiration of 3 Month Reinstatement Period">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure Mediation Program">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Deed Sent for Recording">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="10 Day Mailing Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Acceleration Letter Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Entered if No Answer Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Executed SOT Received">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavit in Support of Order for Foreclosure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="First and Second Notice Prepared">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure Order and Affidavit">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="IRS Bring down/Notification">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Litigation Detail">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Entry of Default Judgement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Summary Judgment Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Judgment Hearing">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Received and Title Report Ordered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgment Entered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Legal Notice Published in Newspaper">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Default Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure Sale Held">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Motion for Judgment of Foreclosure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgment and Order of Sale Entered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Default/Summary Judgment Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Motion for Summary Judgment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Final Title Clear">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Complaint (Order to Docket) Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="First Publication and Notice of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure by Sale Decree Entered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Affidavits of Notice of Sale Compliance Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Application for Order of Reference Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Judgment Enters/Redemption Period expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Defendants Served and Service of Process Started">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Document Review of Security Instruments">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="First Publication">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Legal Notice Sent to Newspaper">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Judgment Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Advertising Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Entry of Default">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Hearing Held">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Trustee’s Sale served by Certified Mail">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notify FHLMC/FNMA of Sale Results">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order of Confirmation">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication Complete">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Election and Demand Sent to Public Trste">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Hearing (NOH) Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Posting to Sale Held">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Foreclosure File Received">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Hearing Set">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Pendency Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Acceleration Notice Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Docket Order Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgment Entered / Writ of Execution">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Lis Pendens Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mail Requires Notices">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale Mailed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order of Reference Entered and Hearing Scheduled">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Court Order Obtained Authorizing Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MCL 600 3208 Foreclosure Notice posted">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice letter Sent to Mortgagor">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Default Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Pub Started and Notice of Sale Posted">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication of the Notice of Foreclosure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Confirmed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Petition for Seizure and Sale of Property Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mandatory Settlement Conference Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Summary Judgment and Decree of FC Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice to IRS 7425 IRC">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication and First Publication">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication/Service of Process Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Redemption Period Expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Scheduled">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Scheduled Sale Date">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgment Confirming Default">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sheriff's Sale and Posting of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale sent to Newspaper">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion to Appoint Referee to Compute Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Writ of Execution">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication Period">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service Complete">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Posting and Publishing of Sale/NOS Mailings">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Process of Service Started">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Record Notice of Trustee's Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Ordered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Upset Bid Period Expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Scheduled Date">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Scheduled/NED Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Send 10-Day Notices">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service Began">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summons and Complaint Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Received and Reviewed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication/Posting of Sale completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service of Process">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service of Writ">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Submitted for Service">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Trustee Sale Scheduled">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Initial Scheduling Conference">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Foreclosure sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Post-sale Bankruptcy Search">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service Default">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Judgment of Foreclosure Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Default Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Prepare and Send SOT to Servicer">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Receive Proof of Service">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service of Complaint Commenced">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Signed Order Received">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Report Received">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Hearing Service Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mail Notice of Sale to Borrower">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Oath and Report Submitted to Referee">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication and Posting of Sale Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale scheduled date (tied to Judgment entered)">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Set Trustee's Sale_Record Notice of Trustee's Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summary Judgment">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FFD/Acceleration Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Notice of Default">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Borrower Provided Notice of Entry of Final Judgmnt">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgment of Foreclosure and Sale Entered">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Confirmation of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order of Reference Entered and Referee Appointed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Substitution of Trustee Executed and Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Foreclosure Notice with County Clerk">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="File Sent to Public Trustee">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Final Judgment Expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice mailed and Pub sent to Legal Newspaper">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication Starts">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Scheduled and Notice of Intent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Trustee Sale Scheduled Date (Tied to NOTS)">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication/Posting on Property Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Record Notice of Default">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Complete">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Scheduled and Notice of Default Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Submit Default Applications">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Publication/Sale Date Set">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Deed Executed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Answer Period Runs">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Certificate of Title Issued">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Default Date">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Judgement Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Motion for Final Ratification of Sale Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order of Notice Received from Land Court">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Order Reference Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Period of Redemption Expires">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Post Notice of Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Preliminary Title Clear">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Rule 120 hearing Date">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sale Date Set">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service of Complaint Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Substitution of Trustee Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summons Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Writ of Fieri Facias issues">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Status Conference">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Work Completed and Complaint Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Trustee's Deed Prepared and Sent for Recording">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="MCL 600 3208 is mailed to the borrower">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice of Sale Publication started">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Notice Sent">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Process of Service Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Redemption Period Expires/Deed Recorded">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Request for Bid">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service of Process Completed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Supplemental Mailing List Filed">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Writ of Seizure and Sale Issued">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Send Notice to Publisher for Publishing">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Sheriff Seized Property">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="qbo.DecisionDelayItem">
+    <xs:all>
+      <xs:element name="DecisionDelayTemplate" type="qbo.DecisionDelayTemplate.Foreclosure" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="ActualStart" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ProjectedCompletion" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="ActualCompletion" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Messages_0_Message" type="qbo.DecisionDelayMessageType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Messages_0_BodyText" type="qboText" minOccurs="0" maxOccurs="1"/>
+
+      <!---Litigation Fields-->
+      <xs:element name="PartyStatusCode" type="qbo.ImportForm.PartyStatusCode" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="LitigationStatusCode" type="qbo.ImportForm.LitigationStatusCode" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="LitigationDate" type="qboDateOptionalTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="LitigationClaimCode" type="qbo.ImportForm.LitigationClaimCode" minOccurs="0" maxOccurs="1"/>
+
+    </xs:all>
+  </xs:complexType>
+  <xs:simpleType name="qbo.DecisionDelayTemplate.Foreclosure">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Property Issues / Seizure">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Forebearance Agreement">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Servicer Issued">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Ch 12">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Ch 11">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Ch 13">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Ch 7">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Low Balance Loan">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="DIL">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FRE Moratorium">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="OCC">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Repay Plan">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Statutory/Jurisdictional Delay">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="HAMP">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mediation">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Litigation Detail">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Contested">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Document Delay">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="JR. Lien Bankruptcy">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Loss Mitigation">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Modification">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Probate">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="SCRA">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Short Sale">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Title Issue">
+        <xs:annotation>
+          <xs:documentation>Applies to Foreclosure</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.ImportForm.PartyStatusCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="FM Party Plaintiff" />
+      <xs:enumeration value="FM Party Defendant" />
+      <xs:enumeration value="FM not named" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.ImportForm.LitigationStatusCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Complaint Filed" />
+      <xs:enumeration value="Dispositive Motion Filed" />
+      <xs:enumeration value="Discovery Period" />
+      <xs:enumeration value="Trial Date" />
+      <xs:enumeration value="Notice of appeal Filed" />
+      <xs:enumeration value="Appellate Briefing Schedule" />
+      <xs:enumeration value="Post Trial Proceedings" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.ImportForm.LitigationClaimCode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Conservatorship issue or challenge" />
+      <xs:enumeration value="Federal Instrumentality status" />
+      <xs:enumeration value="Charter interpretation or challenge" />
+      <xs:enumeration value="Freddie Mac as Federal Agency or Government Actor claim" />
+      <xs:enumeration value="Constitutional claim, including due process" />
+      <xs:enumeration value="Class Action claim" />
+      <xs:enumeration value="MERS claim" />
+      <xs:enumeration value="Environmental claim" />
+      <xs:enumeration value="Order to Show Cause, Sanction Motion or Hearings" />
+      <xs:enumeration value="HAMP claim" />
+      <xs:enumeration value="Predatory Lending claim" />
+      <xs:enumeration value="Ability to Re-pay claim" />
+      <xs:enumeration value="Discrimination claim" />
+      <xs:enumeration value="Uniform Mortgage Instrument claim" />
+      <xs:enumeration value="Other" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.DecisionDelayMessageType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Delay Changed" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="qboLoanType">
+    <xs:all>
+      <xs:element name="Agency" type="qbo.Agency" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Loan" type="qbo.Loan.Loan" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="ServicerLoanID" type="qboNvarchar100" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="LoanType" type="qbo.Loan.LoanType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="OriginalBalance" type="qbo.Loan.OriginalBalance" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="UPBAmount" type="qbo.Loan.UPBAmount" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="LienPriorityType" type="qbo.Loan.LienPriorityType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Borrowers" type="qboBorrowersType" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="PublicRecords" type="qboPublicRecordsType" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="qbo.Ledger.TotalDebtLedger">
+    <xs:all>
+      <xs:element name="Template" type="qbo.Ledger.TotalDebtLedger.Template" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="Items" type="qbo.Ledger.TotalDebtLedger.Items" minOccurs="1" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="qbo.Ledger.TotalDebtLedger.Items">
+    <xs:all>
+      <xs:element name="AccruedLateCharges" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="BKFeesCosts" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CorporateAdvanceBalance" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="CorporateAdvances" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="EscrowBalance" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="FCFeesCosts" type="qbo.Ledger.TotalDebtLedger.Items.FCFeesCosts" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="FundsinSuspense" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="Interestfrom" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="OtherCosts" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="PendingAdvances" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="PerDiem" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="PrincipalBalance" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="RentsCollected" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="TotalDueBeneficiaryasofSaleDate" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="qbo.Ledger.TotalDebtLedger.Items.FCFeesCosts">
+    <xs:all>
+      <xs:element name="Items" type="qbo.Ledger.TotalDebtLedger.Items.FCFeesCosts.Items" minOccurs="1" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+  <xs:complexType name="qbo.Ledger.TotalDebtLedger.Items.FCFeesCosts.Items">
+    <xs:all>
+      <xs:element name="ForeclosureFee" type="qboDecimal" minOccurs="0" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="qboBorrowersType">
+    <xs:sequence>
+      <xs:element  minOccurs="1" maxOccurs="10" name="BorrowerItem" type="qboBorrowerItemType" />
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="qboBorrowerItemType">
+    <xs:all>
+      <xs:element minOccurs="1" maxOccurs="1" name="Sequence" type="qbo.Sequence" />
+      <xs:element minOccurs="1" maxOccurs="1" name="BorrowerType" type="qbo.Borrower.BorrowerType" />
+      <xs:element minOccurs="1" nillable="true" maxOccurs="1" name="FirstName" type="qboNvarchar50" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="MiddleName" type="qboNvarchar20" />
+      <xs:element minOccurs="1" nillable="true" maxOccurs="1" name="LastName" type="qboNvarchar100" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="Suffix" type="qboNvarchar20" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="Address" type="qboNvarchar50" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="City" type="qboNvarchar50" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="State" type="qbo.State" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="PostalCode" type="qbo.PostalCode" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="Country" type="qboNvarchar50" />
+      <xs:element minOccurs="0" nillable="true" maxOccurs="1" name="USSSN" type="qbo.USSSN" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="qboPublicRecordsType">
+    <xs:sequence>
+      <xs:element  minOccurs="0" maxOccurs="10" name="PublicRecordItem" type="qboPublicRecordItemType" />
+    </xs:sequence>
+    <xs:attribute name="Reference" type="qbo.Reference"/>
+  </xs:complexType>
+  <xs:complexType name="qboPublicRecordItemType">
+    <xs:all>
+      <xs:element minOccurs="0" maxOccurs="1" name="PublicRecord" type="qbo.PublicRecord" />
+      <xs:element minOccurs="0" maxOccurs="1" name="FilingDate" type="qboDateOptionalTime" />
+      <xs:element minOccurs="0" maxOccurs="1" name="RecordingDate" type="qboDateOptionalTime" />
+    </xs:all>
+  </xs:complexType>
+  
+  <!--Custom Types-->
+
+  <xs:simpleType name="qbo.Ledger.TotalDebtLedger.Template">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Total Debt" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Agency">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Freddie Mac" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.ProcessType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Judicial" />
+      <xs:enumeration value="Non Judicial" />
+      <xs:enumeration value="Home Equity" />
+      <xs:enumeration value="Co-op" />
+      <xs:enumeration value="Judicial Executory" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Foreclosure.DeficiencyStatus">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Waived" />
+      <xs:enumeration value="Preserved" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Foreclosure.Status">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Abandoned Properties" />
+      <xs:enumeration value="Expedited Vacant" />
+      <xs:enumeration value="Receivership" />
+      <xs:enumeration value="Consent Judgment" />
+      <xs:enumeration value="Open" />
+      <xs:enumeration value="On Hold" />
+      <xs:enumeration value="Closed" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Borrower.BorrowerType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Primary">
+        <xs:annotation>
+          <xs:documentation>Primary Contact</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Secondary">
+        <xs:annotation>
+          <xs:documentation>Secondary Contact</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Foreclosure.SoldToName">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Back to Beneficiary">
+        <xs:annotation>
+          <xs:documentation>Back to Beneficiary</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Third Party">
+        <xs:annotation>
+          <xs:documentation>Third Party</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Foreclosure.Operation">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Restart">
+        <xs:annotation>
+          <xs:documentation>Foreclosure Restart</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Foreclosure.CloseReason">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Case Completed">
+        <xs:annotation>
+          <xs:documentation>Case Completed</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Paid Off / Reinstated">
+        <xs:annotation>
+          <xs:documentation>Paid Off / Reinstated</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Repurchased">
+        <xs:annotation>
+          <xs:documentation>Repurchased</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Servicer Request">
+        <xs:annotation>
+          <xs:documentation>Servicer Request</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Investor Request">
+        <xs:annotation>
+          <xs:documentation>Investor Request</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Opened In Error">
+        <xs:annotation>
+          <xs:documentation>Opened In Error</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Third Party Sale Completed">
+        <xs:annotation>
+          <xs:documentation>Third Party Sale Completed</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Consent Judgment">
+        <xs:annotation>
+          <xs:documentation>Consent Judgment</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Loss Mitigation Completed">
+        <xs:annotation>
+          <xs:documentation>Loss Mitigation Completed</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Bankruptcy Filed">
+        <xs:annotation>
+          <xs:documentation>Bankruptcy Filed</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Charge Off Completed ">
+        <xs:annotation>
+          <xs:documentation>Charge Off Completed </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Low Balance Loan">
+        <xs:annotation>
+          <xs:documentation>Low Balance Loan</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Investor Loan Sold">
+        <xs:annotation>
+          <xs:documentation>Investor Loan Sold</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Loan.Loan">
+    <xs:annotation>
+      <xs:documentation>string that must be between 7 and 12 characters</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="7" />
+      <xs:maxLength value="12" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Loan.LoanType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Conventional">
+        <xs:annotation>
+          <xs:documentation>Conventional</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FHA">
+        <xs:annotation>
+          <xs:documentation>FHA</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="VA">
+        <xs:annotation>
+          <xs:documentation>VA</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="USDA">
+        <xs:annotation>
+          <xs:documentation>USDA</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Loan.OriginalBalance">
+    <xs:annotation>
+      <xs:documentation>qbo Decimal based on xs:decimal</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Loan.UPBAmount">
+    <xs:annotation>
+      <xs:documentation>qbo Decimal based on xs:decimal</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal">
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Loan.LienPriorityType">
+    <xs:restriction base="xs:integer">
+      <xs:enumeration value="1" />
+      <xs:enumeration value="2" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.PublicRecord">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Mortgage Deed of Trust">
+        <xs:annotation>
+          <xs:documentation>Mortgage Deed of Trust</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>  
+
+  <!--Simple Types-->
+  <xs:simpleType name="qboNvarchar12">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 12</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="12" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboNvarchar20">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 20</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="20" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboNvarchar25">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 25</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="25" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboNvarchar50">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 50</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="50" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboNvarchar100">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 100</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="100" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboNvarchar255">
+    <xs:annotation>
+      <xs:documentation>string with a maximum length of 255</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="255" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboDateOptionalTime">
+    <xs:annotation>
+      <xs:documentation>
+        Accepts date or dateTime value. Acceptable formats are:
+        YYYY-MM-DD
+        YYYY-MM-DDTHH:MM:SS
+        YYYY-MM-DDTHH:MM:SS+HH:MM
+        YYYY-MM-DDTHH:MM:SS-HH:MM
+        YYYY-MM-DDTHH:MM:SSZ
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:whiteSpace value="collapse" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}T{1}[\d]{2}:[\d]{2}" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2}Z" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2}" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2}\+[\d]{2}:[\d]{2}" />
+      <xs:pattern value="[\d]{4}-[\d]{2}-[\d]{2}T[\d]{2}:[\d]{2}:[\d]{2}\-[\d]{2}:[\d]{2}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboDecimal">
+    <xs:annotation>
+      <xs:documentation>qbo Decimal based on xs:decimal</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:decimal" />
+  </xs:simpleType>
+  <xs:simpleType name="qboInteger">
+    <xs:annotation>
+      <xs:documentation>qbo Integer based on xs:integer</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:integer" />
+  </xs:simpleType>
+  <xs:simpleType name="qbo.USSSN">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="11" />
+      <xs:whiteSpace value="collapse" />
+      <xs:pattern value="[\d]{9}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboInt32">
+    <xs:annotation>
+      <xs:documentation>qbo Integer</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:unsignedInt">
+      <xs:maxInclusive value="2147483647" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.PostalCode">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="10" />
+      <xs:whiteSpace value="collapse" />
+      <xs:pattern value="[\d]{5}" />
+      <xs:pattern value="[\d]{9}" />
+      <xs:pattern value="[\d]{5}-[\d]{4}" />
+      <xs:pattern value="[\d]{5} [\d]{4}" />
+      <xs:pattern value="[\d]{5}-" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.State">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="2" />
+      <xs:whiteSpace value="collapse" />
+      <xs:pattern value="AL|AK|AR|AS|AZ|CA|CO|CT|DC|DE|FL|FM|GA|GU|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MH|MI|MN|MO|MP|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|PR|PW|RI|SC|SD|TN|TX|UT|VA|VI|VT|WA|WI|WV|WY|AA|AE|AP|AB|BC|MB|NB|NL|NS|NT|NU|ON|PE|QC|SK|YT|NA|CN" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.SubscriberID">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="255" />
+      <xs:whiteSpace value="collapse" />
+      <xs:pattern value=".+-{1}.+-{1}.+" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qboText">
+    <xs:annotation>
+      <xs:documentation>qbo Text Field</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Reference">
+    <xs:annotation>
+      <xs:documentation>Used as refernce to foreign entity. Length 1 - 50</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="50" />
+      <xs:whiteSpace value="collapse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="qbo.Sequence">
+    <xs:annotation>
+      <xs:documentation>Used to uniquely bind contact under parent. Can can be any integer value but must always be the same value when updating to binding will occur</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:unsignedInt">
+      <xs:maxInclusive value="2147483647" />
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
